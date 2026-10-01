@@ -3,6 +3,7 @@ package payroll.service;
 import payroll.domain.DateInterval;
 import payroll.domain.Employee;
 import payroll.domain.Payslip;
+import payroll.domain.PayslipLine;
 import payroll.rule.Accrual;
 import payroll.rule.CalculationComponent;
 import payroll.rule.Deduction;
@@ -19,16 +20,15 @@ public class PayrollEngine {
         this.registry = registry;
     }
 
-    public void runPayroll(Employee employee, DateInterval interval) {
+    public Payslip runPayroll(Employee employee, DateInterval interval) {
         long total = 0;
 
-        Payslip payslip = new Payslip();
         List<CalculationComponent> calculationComponents = registry.getComponentsFor(employee);
 
         List<Accrual> accruals = new ArrayList<>();
         List<DefaultTax> taxes = new ArrayList<>();
         List<Deduction> deductions = new ArrayList<>();
-
+        List<PayslipLine> payslipLines = new ArrayList<>();
 
         for (var component : calculationComponents) {
             switch (component) {
@@ -38,11 +38,24 @@ public class PayrollEngine {
             }
         }
 
-        for (Accrual a : accruals) {total = a.calculate(total);}
-        for (DefaultTax t : taxes) {total = t.calculate(total);}
-        for (Deduction d : deductions) {total = d.calculate(total);}
-
-        System.out.println(total);
-
+        for (Accrual a : accruals) {
+            long before = total;
+            total = a.calculate(total);
+            long diff = before - total;
+            payslipLines.add(new PayslipLine(a.report(), before, diff));
+        }
+        for (DefaultTax t : taxes) {
+            long before = total;
+            total = t.calculate(total);
+            long diff = before - total;
+            payslipLines.add(new PayslipLine(t.report(), before, diff));
+        }
+        for (Deduction d : deductions) {
+            long before = total;
+            total = d.calculate(total);
+            long diff = before - total;
+            payslipLines.add(new PayslipLine(d.report(), before, diff));
+        }
+        return new Payslip(employee, payslipLines, total);
     }
 }

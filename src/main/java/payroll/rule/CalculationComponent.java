@@ -1,6 +1,6 @@
 package payroll.rule;
 
-public sealed interface CalculationComponent permits Accrual, Deduction{
+public sealed interface CalculationComponent extends Reportable permits Accrual, Deduction{
 
     public long calculate(long base);
 }

@@ -12,4 +12,11 @@ public class Salary extends AbstractCalculationComponent implements Accrual {
 
     @Override
     public long calculate(long base) {return base +  amount;}
+
+    @Override
+    public String report() {
+        long rubles = amount / 100;
+        long kopecks = amount % 100;
+        return String.format("+ Salary (%d rub. %02d kop.)", rubles, kopecks);
+    }
 }

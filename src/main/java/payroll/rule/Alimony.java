@@ -15,4 +15,9 @@ public class Alimony extends AbstractCalculationComponent implements Deduction{
     public long calculate(long base) {
         return base - BigDecimalCalculations.multiplyWithRate(base, rate);
     }
+
+    @Override
+    public String report() {
+        return "- Alimony (" + rate + "%)";
+    }
 }
