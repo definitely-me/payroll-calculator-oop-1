@@ -6,7 +6,7 @@ import java.time.LocalDate;
  * Represents a time interval with a start and end date.
  * <p>
  * The string dates provided to the constructor must be in the ISO-8601 format: {@code yyyy-MM-dd}.
- * For example: {@code "2023-10-01"}.
+ * For example: {@code "2026-10-01"}.
  * </p>
  */
 public record DateInterval(LocalDate startDate, LocalDate endDate) {

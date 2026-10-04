@@ -4,9 +4,12 @@ import payroll.domain.DateInterval;
 
 public abstract class AbstractCalculationComponent {
 
-    DateInterval dateInterval;
+    DateInterval validityInterval;
+    String name;
 
-    public AbstractCalculationComponent(DateInterval dateInterval) {
-        this.dateInterval = dateInterval;
+    public AbstractCalculationComponent(DateInterval dateInterval, String name) {
+        this.validityInterval = dateInterval;
+        this.name = name;
     }
+
 }
