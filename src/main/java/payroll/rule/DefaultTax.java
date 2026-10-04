@@ -4,8 +4,14 @@ import payroll.utils.CalculationUtils;
 
 import java.time.YearMonth;
 
+/**
+ * Standard pre-defined taxes that can be reused across different employees.
+ */
 public enum DefaultTax implements Tax {
 
+    /**
+     * Standard 13% personal income tax.
+     */
     PERSONAL_INCOME_TAX {
         @Override
         public long calculate(long base, YearMonth interval) {

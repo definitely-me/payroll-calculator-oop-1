@@ -2,7 +2,6 @@ package payroll.domain;
 
 public record PayslipLine(String report, long before, long diff) {
 
-
     @Override
     public String toString() {
         return String.format("| %-45s | %13d rub. %02d kop. | %13d rub. %02d kop. | %13d rub. %02d kop. |",

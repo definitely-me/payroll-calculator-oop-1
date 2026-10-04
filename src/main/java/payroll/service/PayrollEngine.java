@@ -18,12 +18,22 @@ public class PayrollEngine {
         this.registry = registry;
     }
 
+    /**
+     * Runs the calculation pipeline for the given employee.
+     * It applies accruals, then taxes and deductions. Strict order.
+     *
+     * @param employee          the target employee
+     * @param interval          the specific month and year to calculate
+     * @param overdeductionRate the maximum allowed deduction percentage (for example: "50")
+     * @return the final payslip with calculation details
+     * @throws OverdeductionException if total deductions exceed the allowed limit
+     */
     public Payslip runPayroll(Employee employee, YearMonth interval, String overdeductionRate) throws OverdeductionException {
         long total = 0;
         long gross = 0;
         long totalDeductions = 0;
 
-        List<CalculationComponent> calculationComponents = registry.getComponentsFor(employee);
+        final List<CalculationComponent> calculationComponents = registry.getComponentsFor(employee);
 
         List<Accrual> accruals = new ArrayList<>();
         List<Tax> taxes = new ArrayList<>();
@@ -62,8 +72,6 @@ public class PayrollEngine {
             payslipLines.add(new PayslipLine(d.report(), before, diff));
         }
         if (totalDeductions > CalculationUtils.multiplyWithRate(gross, overdeductionRate)) {
-            System.out.println(CalculationUtils.multiplyWithRate(gross, overdeductionRate));
-            System.out.println(totalDeductions);
             throw new OverdeductionException("exceeded overdeduction rate");
         }
         return new Payslip(employee, payslipLines, total);

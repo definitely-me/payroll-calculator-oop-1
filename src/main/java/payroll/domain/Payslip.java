@@ -2,15 +2,25 @@ package payroll.domain;
 
 import payroll.rule.Reportable;
 
-import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents a generated payslip document for an employee.
+ * Contains the detailed list of calculation steps and the final net pay.
+ */
 public class Payslip implements Reportable {
 
-    Employee employee;
-    List<PayslipLine> payslipLines = new ArrayList<>();
-    long total;
+    private final Employee employee;
+    private final List<PayslipLine> payslipLines;
+    private final long total;
 
+    /**
+     * Creates a new payslip.
+     *
+     * @param employee     the employee this payslip belongs to
+     * @param payslipLines the detailed lines of calculation
+     * @param total        the final calculated net pay (in kopecks)
+     */
     public Payslip(Employee employee, List<PayslipLine> payslipLines, long total) {
         this.employee = employee;
         this.payslipLines = List.copyOf(payslipLines);

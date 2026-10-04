@@ -3,6 +3,9 @@ package payroll.utils;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+/**
+ * Util methods used to calculate the money safely with BigDecimal.
+ */
 public final class CalculationUtils {
 
     public static long multiplyWithRate(long base, String rate) {
@@ -19,8 +22,6 @@ public final class CalculationUtils {
         var divisorBD = new BigDecimal(decimalValue);
         return baseBD.divide(divisorBD, 0, RoundingMode.HALF_UP).longValue();
     }
-
-
 
     private CalculationUtils() {
     }

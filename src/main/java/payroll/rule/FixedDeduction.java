@@ -5,10 +5,20 @@ import payroll.utils.DateUtils;
 
 import java.time.YearMonth;
 
+/**
+ * A deduction that removes a fixed amount of money.
+ */
 public class FixedDeduction extends AbstractCalculationComponent implements Deduction {
 
-    long amount;
+    private final long amount;
 
+    /**
+     * Creates a fixed deduction.
+     *
+     * @param dateInterval the period when this rule is active
+     * @param amount       the exact amount to remove (in kopecks)
+     * @param name         the name shown in the report
+     */
     public FixedDeduction(DateInterval dateInterval, long amount, String name) {
         super(dateInterval, name);
         this.amount = amount;
@@ -16,7 +26,7 @@ public class FixedDeduction extends AbstractCalculationComponent implements Dedu
 
     @Override
     public long calculate(long base, YearMonth interval) {
-        if (DateUtils.getOverlapDays(validityInterval, interval) > 0) {
+        if (DateUtils.getOverlapDays(getValidityInterval(), interval) > 0) {
             return base - amount;
         }
         return base;
@@ -26,6 +36,6 @@ public class FixedDeduction extends AbstractCalculationComponent implements Dedu
     public String report() {
         long rubles = amount / 100;
         long kopecks = amount % 100;
-        return String.format("- %s (%d rub. %02d kop.)", name, rubles, kopecks);
+        return String.format("- %s (%d rub. %02d kop.)", getName(), rubles, kopecks);
     }
 }
