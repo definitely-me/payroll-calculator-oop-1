@@ -3,37 +3,31 @@ package payroll.service;
 import payroll.domain.Employee;
 import payroll.domain.Payslip;
 import payroll.domain.PayslipLine;
+import payroll.domain.PayslipVersion;
 import payroll.rule.*;
-import payroll.utils.CalculationUtils;
+import payroll.util.CalculationUtils;
 
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PayrollEngine {
+class PayrollEngine {
 
-    private final PayrollRegistry registry;
+    private final PayrollRegistry prlRegistry;
 
-    public PayrollEngine(PayrollRegistry registry) {
-        this.registry = registry;
+    private final PayslipRegistry pspRegistry;
+
+    PayrollEngine(PayrollRegistry prlRegistry, PayslipRegistry pspRegistry) {
+        this.prlRegistry = prlRegistry;
+        this.pspRegistry = pspRegistry;
     }
 
-    /**
-     * Runs the calculation pipeline for the given employee.
-     * It applies accruals, then taxes and deductions. Strict order.
-     *
-     * @param employee          the target employee
-     * @param interval          the specific month and year to calculate
-     * @param overdeductionRate the maximum allowed deduction percentage (for example: "50")
-     * @return the final payslip with calculation details
-     * @throws OverdeductionException if total deductions exceed the allowed limit
-     */
-    public Payslip runPayroll(Employee employee, YearMonth interval, String overdeductionRate) throws OverdeductionException {
+    PayslipVersion runPayroll(Employee employee, YearMonth period, String overdeductionRate) throws OverdeductionException {
         long total = 0;
         long gross = 0;
         long totalDeductions = 0;
 
-        final List<CalculationComponent> calculationComponents = registry.getComponentsFor(employee);
+        final List<CalculationComponent> calculationComponents = prlRegistry.getComponentsFor(employee);
 
         List<Accrual> accruals = new ArrayList<>();
         List<Tax> taxes = new ArrayList<>();
@@ -50,30 +44,33 @@ public class PayrollEngine {
 
         for (Accrual a : accruals) {
             long before = total;
-            total = a.calculate(total, interval);
-            long diff = before - total;
-            payslipLines.add(new PayslipLine(a.report(), before, diff));
+            total = a.calculate(total, period);
+            long diff = total - before;
+            payslipLines.add(new PayslipLine(a.report(), a.getCategory(), before, diff));
         }
 
         gross = total;
 
         for (Tax t : taxes) {
             long before = total;
-            total = t.calculate(total, interval);
-            long diff = before - total;
-            payslipLines.add(new PayslipLine(t.report(), before, diff));
+            total = t.calculate(total, period);
+            long diff = total - before;
+            payslipLines.add(new PayslipLine(t.report(), t.getCategory(), before, diff));
             totalDeductions += diff;
         }
         for (Deduction d : deductions) {
             long before = total;
-            total = d.calculate(total, interval);
-            long diff = before - total;
+            total = d.calculate(total, period);
+            long diff = total - before;
             totalDeductions += diff;
-            payslipLines.add(new PayslipLine(d.report(), before, diff));
+            payslipLines.add(new PayslipLine(d.report(), d.getCategory(), before, diff));
         }
-        if (totalDeductions > CalculationUtils.multiplyWithRate(gross, overdeductionRate)) {
+        if (Math.abs(totalDeductions) > CalculationUtils.multiplyWithRate(gross, overdeductionRate)) {
+            System.out.println("shit");
             throw new OverdeductionException("exceeded overdeduction rate");
         }
-        return new Payslip(employee, payslipLines, total);
+        PayslipVersion payslipVersion = new PayslipVersion(new Payslip(employee, payslipLines, total));
+        pspRegistry.registerPayslipVersion(employee, period.getMonth(), payslipVersion);
+        return payslipVersion;
     }
 }

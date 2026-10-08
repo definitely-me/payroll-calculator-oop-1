@@ -1,4 +1,4 @@
-package payroll.utils;
+package payroll.util;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

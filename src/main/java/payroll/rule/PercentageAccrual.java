@@ -1,11 +1,10 @@
 package payroll.rule;
 
 import payroll.domain.DateInterval;
-import payroll.utils.CalculationUtils;
-import payroll.utils.DateUtils;
+import payroll.util.CalculationUtils;
+import payroll.util.DateUtils;
 
 import java.time.YearMonth;
-
 
 /**
  * An accrual that adds money based on a percentage of the current base.
@@ -36,6 +35,6 @@ public class PercentageAccrual extends AbstractCalculationComponent implements A
 
     @Override
     public String report() {
-        return "+ " + getName() + " (" + rate + "%)";
+        return "+ " + getCategory() + " (" + rate + "%)";
     }
 }

@@ -1,8 +1,8 @@
 package payroll.rule;
 
 import payroll.domain.DateInterval;
-import payroll.utils.CalculationUtils;
-import payroll.utils.DateUtils;
+import payroll.util.CalculationUtils;
+import payroll.util.DateUtils;
 
 import java.time.YearMonth;
 
@@ -35,6 +35,6 @@ public class ProportionalAccrual extends AbstractCalculationComponent implements
     public String report() {
         long rubles = amount / 100;
         long kopecks = amount % 100;
-        return String.format("+ %s (%d rub. %02d kop.)", getName(), rubles, kopecks);
+        return String.format("+ %s (%d rub. %02d kop.)", getCategory(), rubles, kopecks);
     }
 }

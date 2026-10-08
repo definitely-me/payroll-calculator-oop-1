@@ -1,7 +1,7 @@
 package payroll.rule;
 
 import payroll.domain.DateInterval;
-import payroll.utils.DateUtils;
+import payroll.util.DateUtils;
 
 import java.time.YearMonth;
 
@@ -36,6 +36,6 @@ public class FixedDeduction extends AbstractCalculationComponent implements Dedu
     public String report() {
         long rubles = amount / 100;
         long kopecks = amount % 100;
-        return String.format("- %s (%d rub. %02d kop.)", getName(), rubles, kopecks);
+        return String.format("- %s (%d rub. %02d kop.)", getCategory(), rubles, kopecks);
     }
 }

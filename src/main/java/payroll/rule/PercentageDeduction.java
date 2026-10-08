@@ -1,8 +1,8 @@
 package payroll.rule;
 
 import payroll.domain.DateInterval;
-import payroll.utils.CalculationUtils;
-import payroll.utils.DateUtils;
+import payroll.util.CalculationUtils;
+import payroll.util.DateUtils;
 
 import java.time.YearMonth;
 
@@ -35,6 +35,6 @@ public class PercentageDeduction extends AbstractCalculationComponent implements
 
     @Override
     public String report() {
-        return "- " + getName() +  " (" + rate + "%)";
+        return "- " + getCategory() +  " (" + rate + "%)";
     }
 }

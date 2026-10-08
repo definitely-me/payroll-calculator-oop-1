@@ -1,4 +1,4 @@
-package payroll.utils;
+package payroll.util;
 
 import payroll.domain.DateInterval;
 

@@ -1,6 +1,7 @@
 package payroll.rule;
 
 import java.time.YearMonth;
+import java.util.UUID;
 
 /**
  * Represents a single rule for payroll calculation.
@@ -15,5 +16,8 @@ public sealed interface CalculationComponent extends Reportable permits Accrual,
      * @param interval the target month and year
      * @return the new money amount
      */
-    public long calculate(long base, YearMonth interval);
+    long calculate(long base, YearMonth interval);
+
+    UUID getId();
+    String getCategory();
 }

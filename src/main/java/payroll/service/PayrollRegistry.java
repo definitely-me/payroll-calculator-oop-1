@@ -5,50 +5,60 @@ import payroll.rule.CalculationComponent;
 
 import java.util.*;
 
-/**
- * A registry that holds the active calculation rules for each employee.
- */
-public class PayrollRegistry {
+class PayrollRegistry {
     private final Map<Employee, List<CalculationComponent>> registry = new HashMap<>();
 
-    public PayrollRegistry() {
+    PayrollRegistry() {}
 
-    }
-
-    public Map<Employee, List<CalculationComponent>> getRegistry() {
-        Map<Employee, List<CalculationComponent>> safeMap = new HashMap<>();
-        for (var entry : registry.entrySet()) {
-            safeMap.put(entry.getKey(), Collections.unmodifiableList(entry.getValue()));
+    void replaceComponent(Employee employee, CalculationComponent old, CalculationComponent updated) {
+        List<CalculationComponent> components = getPrivateComponentsFor(employee);
+        if (components.stream().noneMatch((c) -> c.getId().equals(old.getId()))) {
+            throw new IllegalArgumentException("There is no such a component to update");
         }
-        return Collections.unmodifiableMap(safeMap);
+        deleteComponent(employee, old);
+        components.add(updated);
+
     }
 
-    /**
-     * Retrieves an unmodifiable list of components for a specific employee.
-     *
-     * @param employee the target employee
-     * @return the list of active calculation components
-     * @throws IllegalArgumentException if the employee is not registered
-     */
-    public List<CalculationComponent> getComponentsFor(Employee employee) {
+    void deleteComponent(Employee employee, CalculationComponent deleted) {
+        List<CalculationComponent> components = getPrivateComponentsFor(employee);
+        components.removeIf((c) -> c.getId().equals(deleted.getId()));
+    }
+
+    private List<CalculationComponent> getPrivateComponentsFor(Employee employee) {
+        return registry.get(employee);
+    }
+
+    Set<Employee> getAllEmployees() {
+        return Collections.unmodifiableSet(registry.keySet());
+    }
+
+    void registerEmployee(Employee employee) {
+        if (registry.containsKey(employee)) {
+            throw new IllegalArgumentException("There is already such an employee registered");
+        }
+        registry.put(employee, new ArrayList<>());
+    }
+
+    List<CalculationComponent> getComponentsFor(Employee employee) {
         if (!registry.containsKey(employee)) {
             throw new IllegalArgumentException("There is no such an employee registered");
         }
         return Collections.unmodifiableList(registry.get(employee));
     }
 
-    public void setComponentsFor(Employee employee, CalculationComponent component) {
-        registry.computeIfAbsent(employee, (k) -> new ArrayList<>()).add(component);
+    void setComponentFor(Employee employee, CalculationComponent component) {
+        if (!registry.containsKey(employee)) {
+            throw new IllegalArgumentException("There is no such an employee registered");
+        }
+        registry.get(employee).add(component);
     }
 
-    /**
-     * Assigns a list of calculation components to an employee.
-     *
-     * @param employee   the target employee
-     * @param components the components to assign
-     */
-    public void setComponentsFor(Employee employee, List<CalculationComponent> components) {
-        registry.computeIfAbsent(employee, (k) -> new ArrayList<>()).addAll(components);
+    void setComponentsFor(Employee employee, List<CalculationComponent> components) {
+        if (!registry.containsKey(employee)) {
+            throw new IllegalArgumentException("There is no such an employee registered");
+        }
+        registry.put(employee, new ArrayList<>(components));
     }
 
 }

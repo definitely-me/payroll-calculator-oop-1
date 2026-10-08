@@ -1,6 +1,6 @@
 package payroll.rule;
 /**
- * Represents a single rule for reporting. Report is used in the payslip. Payslip can be reported as well.
+ * Represents a single rule for reporting to stdout. Report is used by payslip components.
  */
 public interface Reportable {
     String report();

@@ -2,8 +2,7 @@ import org.junit.jupiter.api.Test;
 import payroll.domain.DateInterval;
 import payroll.domain.Employee;
 import payroll.rule.*;
-import payroll.service.PayrollEngine;
-import payroll.service.PayrollRegistry;
+import payroll.service.PayrollSystem;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -14,17 +13,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class PayrollTest {
 
     @Test
-    void testEqualsAndHashCodeEmployee() {
-        Employee e1 = new Employee(1);
-        Employee e2 = new Employee(1);
-        Employee e3 = new Employee(2);
-
-        assertEquals(e1, e2, "Employees with the same ID should be equal");
-        assertEquals(e1.hashCode(), e2.hashCode(), "Hash codes should match for equal employees");
-        assertNotEquals(e1, e3, "Employees with different IDs should not be equal");
-    }
-
-    @Test
     void testEqualsAndHashCodeDateInterval() {
         DateInterval d1 = new DateInterval("2026-01-01", "2026-01-31");
         DateInterval d2 = new DateInterval(LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 31));
@@ -32,7 +20,6 @@ public class PayrollTest {
         assertEquals(d1, d2, "Intervals with the same dates should be equal");
         assertEquals(d1.hashCode(), d2.hashCode(), "Hash codes should match for equal intervals");
     }
-
 
     @Test
     void testProportionalAccrualFullMonth() {
@@ -88,6 +75,7 @@ public class PayrollTest {
         assertEquals(7500_00, result, "25% of 10000 is 2500. Total should be 7500");
     }
 
+    @Test
     void testDefaultTax() {
         long result = DefaultTax.PERSONAL_INCOME_TAX.calculate(10000_00, YearMonth.of(2026, 1));
         assertEquals(8700_00, result, "13% tax should deduct 1300 from the base");
@@ -95,35 +83,33 @@ public class PayrollTest {
 
     @Test
     void testOverdeductionExceptionThrown() {
-        Employee emp = new Employee(1);
-        PayrollRegistry registry = new PayrollRegistry();
+        Employee emp = new Employee();
+        PayrollSystem system = new PayrollSystem();
 
-        registry.setComponentsFor(emp, List.of(
+        system.registerEmployee(emp);
+        system.addComponents(emp, List.of(
                 new FixedAccrual(new DateInterval("2026-01-01", "2026-01-31"), 10000_00, "Salary"),
                 new FixedDeduction(new DateInterval("2026-01-01", "2026-01-31"), 6000_00, "Huge Fine")
         ));
 
-        PayrollEngine engine = new PayrollEngine(registry);
-
         assertThrows(OverdeductionException.class, () -> {
-            engine.runPayroll(emp, YearMonth.of(2026, 1), "50");
+            system.runPayroll(emp, YearMonth.of(2026, 1), "50");
         }, "Should throw an exception when deductions exceed the 50% limit");
     }
 
     @Test
     void testOverdeductionBoundaryNotThrown() {
-        Employee emp = new Employee(2);
-        PayrollRegistry registry = new PayrollRegistry();
+        Employee emp = new Employee();
+        PayrollSystem system = new PayrollSystem();
 
-        registry.setComponentsFor(emp, List.of(
+        system.registerEmployee(emp);
+        system.addComponents(emp, List.of(
                 new FixedAccrual(new DateInterval("2026-01-01", "2026-01-31"), 10000_00, "Salary"),
                 new FixedDeduction(new DateInterval("2026-01-01", "2026-01-31"), 5000_00, "Huge Fine")
         ));
 
-        PayrollEngine engine = new PayrollEngine(registry);
-
         assertDoesNotThrow(() -> {
-            engine.runPayroll(emp, YearMonth.of(2026, 1), "50");
+            system.runPayroll(emp, YearMonth.of(2026, 1), "50");
         }, "Should not throw an exception when deductions are exactly equal to the limit (50%)");
     }
 }
