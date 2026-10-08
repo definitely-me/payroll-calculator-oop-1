@@ -1,8 +1,5 @@
 package payroll.domain;
 
-import java.util.List;
-
-
 public record PayslipLine(String report, String category, long before, long diff){
 
     @Override

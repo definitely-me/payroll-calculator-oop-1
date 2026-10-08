@@ -7,7 +7,6 @@ import payroll.rule.*;
 import payroll.service.PayrollSystem;
 
 import java.time.YearMonth;
-import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,61 +19,44 @@ public class Main {
         DateInterval currentMonthInterval = new DateInterval("2026-01-01", "2026-01-31");
         YearMonth targetMonth = YearMonth.of(2026, 1);
 
-        for (int i = 1; i <= 1; i++) {
 
-            var employee = new Employee();
-            
-            system.registerEmployee(employee);
+        var employee = new Employee();
 
-            List<CalculationComponent> initialComponents = new ArrayList<>();
-            CalculationComponent baseSalary = new FixedAccrual(standardInterval, 100000_00L, "Salary");
-            initialComponents.add(baseSalary);
+        system.registerEmployee(employee);
 
-            initialComponents.add(DefaultTax.PERSONAL_INCOME_TAX);
-            
-            system.addComponents(employee, initialComponents);
+        List<CalculationComponent> initialComponents = new ArrayList<>();
+        CalculationComponent baseSalary = new FixedAccrual(standardInterval, 100000_00L, "Salary");
+        initialComponents.add(baseSalary);
 
-            try {
-                PayslipVersion version1 = system.runPayroll(employee, targetMonth, "50");
-                System.out.println("--- VERSION 1 (Base Salary + Tax) ---");
-                System.out.println(version1.payslip().toString());
+        initialComponents.add(DefaultTax.PERSONAL_INCOME_TAX);
 
-                CalculationComponent bonus = new FixedAccrual(currentMonthInterval, 20000_00L, "Quarterly Bonus");
-                system.addComponent(employee, bonus);
+        system.addComponents(employee, initialComponents);
+
+        try {
+            PayslipVersion version1 = system.runPayroll(employee, targetMonth, "50");
+            System.out.println("--- VERSION 1 (Base Salary + Tax) ---");
+            System.out.println(version1.payslip().toString());
+
+            CalculationComponent bonus = new FixedAccrual(currentMonthInterval, 20000_00L, "Quarterly Bonus");
+            system.addComponent(employee, bonus);
 
 
-                CalculationComponent updatedSalary = new FixedAccrual(standardInterval, 150000_00L, "Salary");
-                system.replaceComponent(employee, baseSalary, updatedSalary);
-                system.addComponent(employee, updatedSalary);
-                //system.deleteComponent(employee, bonus);
+            CalculationComponent updatedSalary = new FixedAccrual(standardInterval, 150000_00L, "Salary");
+            system.replaceComponent(employee, baseSalary, updatedSalary);
+            system.addComponent(employee, updatedSalary);
 
-                System.out.println("--- GET COMPONENTS LIST API ---");
-                List<CalculationComponent> activeComponents = system.getComponents(employee);
-//                activeComponents.add(updatedSalary);
-//                System.out.println("Active components count: " + activeComponents.size());
-//                for (CalculationComponent c : activeComponents) {
-//                    System.out.println(" - " + c.getCategory());
-//                }
+            PayslipVersion version2 = system.runPayroll(employee, targetMonth, "50");
+            System.out.println("\n--- VERSION 2 (Increased Salary + Tax) ---");
+            System.out.println(version2.payslip().toString());
 
-                PayslipVersion version2 = system.runPayroll(employee, targetMonth, "50");
-                System.out.println("\n--- VERSION 2 (Increased Salary + Tax) ---");
-                System.out.println(version2.payslip().toString());
+            System.out.println("\n--- COMPARE VERSIONS API ---");
+            String diff = system.reportDiff(version1, version2);
+            System.out.println(diff);
 
-                System.out.println("\n--- GET PAYSLIPS LIST API ---");
-                List<PayslipVersion> payslips = system.getPayslips(employee, Month.JANUARY);
-                System.out.println("Saved payslips for January count: " + payslips.size());
 
-                System.out.println("\n--- COMPARE VERSIONS API ---");
-                String diff = system.reportDiff(version1, version2);
-                if (diff == null || diff.isEmpty()) {
-                    System.out.println("No difference returned (diff logic not fully implemented yet)");
-                } else {
-                    System.out.println(diff);
-                }
-
-            } catch (Exception e) {
-                System.err.println("Error for employee: " + e.fillInStackTrace());
-            }
+        } catch (Exception e) {
+            System.err.println("Error for employee: " + e.fillInStackTrace());
         }
     }
 }
+
