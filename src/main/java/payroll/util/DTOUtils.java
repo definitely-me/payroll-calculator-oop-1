@@ -1,8 +1,8 @@
 package payroll.util;
 
 import payroll.domain.Payslip;
-import payroll.domain.PayslipLine;
 import payroll.domain.PayslipDiffReport;
+import payroll.domain.PayslipLine;
 
 import java.util.*;
 
@@ -62,7 +62,7 @@ public final class DTOUtils {
         }
 
         Set<String> keyset = new LinkedHashSet<>(otherSortedLines.keySet());
-        keyset.addAll(otherSortedLines.keySet());
+        keyset.addAll(oneSortedLines.keySet());
 
         List<PayslipLine> diffLines = new ArrayList<>();
 
@@ -76,13 +76,11 @@ public final class DTOUtils {
                     continue;
                 }
                 diffLine = comparePayslipLines(mergeLines(oneList), mergeLines(otherList));
-            }
-            else if (!oneSortedLines.containsKey(key) && otherSortedLines.containsKey(key)) {
+            } else if (!oneSortedLines.containsKey(key) && otherSortedLines.containsKey(key)) {
                 diffLine = comparePayslipLines(
                         new PayslipLine(otherList.getFirst().report(), otherList.getFirst().category(), 0, 0),
                         mergeLines(otherList));
-            }
-            else if (oneSortedLines.containsKey(key) && !otherSortedLines.containsKey(key)){
+            } else if (oneSortedLines.containsKey(key) && !otherSortedLines.containsKey(key)) {
                 diffLine = comparePayslipLines(
                         new PayslipLine(oneList.getFirst().report(), oneList.getFirst().category(), 0, 0),
                         mergeLines(oneList));

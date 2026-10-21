@@ -50,7 +50,7 @@ public class Main {
             System.out.println(version2.payslip().toString());
 
             System.out.println("\n--- COMPARE VERSIONS API ---");
-            String diff = system.reportDiff(version1, version2);
+            String diff = system.reportDiff(version2, version1);
             System.out.println(diff);
 
 

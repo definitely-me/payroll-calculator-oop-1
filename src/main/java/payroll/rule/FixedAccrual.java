@@ -1,6 +1,7 @@
 package payroll.rule;
 
 import payroll.domain.DateInterval;
+import payroll.util.CalculationUtils;
 import payroll.util.DateUtils;
 
 import java.time.YearMonth;
@@ -18,11 +19,11 @@ public class FixedAccrual extends AbstractCalculationComponent implements Accrua
      *
      * @param dateInterval the period when this rule is active
      * @param amount       the exact amount to add (in kopecks)
-     * @param category         the name shown in the report
+     * @param category     the name shown in the report
      */
     public FixedAccrual(DateInterval dateInterval, long amount, String category) {
         super(dateInterval, category);
-        this.amount = amount;
+        this.amount = CalculationUtils.requireNonNegative(amount);
 
     }
 

@@ -1,6 +1,6 @@
 package payroll.domain;
 
-import java.util.*;
+import java.util.List;
 
 /**
  * Creates a new payslip.

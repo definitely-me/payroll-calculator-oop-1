@@ -23,6 +23,7 @@ class PayrollEngine {
     }
 
     PayslipVersion runPayroll(Employee employee, YearMonth period, String overdeductionRate) throws OverdeductionException {
+        CalculationUtils.requireNonNegative(overdeductionRate);
         long total = 0;
         long gross = 0;
         long totalDeductions = 0;

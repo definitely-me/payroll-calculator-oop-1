@@ -50,9 +50,6 @@ public class PayrollSystem implements PayrollApi {
 
     @Override
     public PayslipDiffReport getDiffReport(PayslipVersion one, PayslipVersion other) {
-        if (one.createdAt().isAfter(other.createdAt())) {
-            return DTOUtils.reportDiff(other.payslip(), one.payslip());
-        }
         return DTOUtils.reportDiff(one.payslip(), other.payslip());
     }
 

@@ -1,6 +1,6 @@
 package payroll.domain;
 
-public record PayslipLine(String report, String category, long before, long diff){
+public record PayslipLine(String report, String category, long before, long diff) {
 
     @Override
     public String toString() {

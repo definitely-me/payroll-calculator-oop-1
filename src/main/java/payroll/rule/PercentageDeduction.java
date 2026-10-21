@@ -22,7 +22,7 @@ public class PercentageDeduction extends AbstractCalculationComponent implements
      */
     public PercentageDeduction(DateInterval dateInterval, String rate, String name) {
         super(dateInterval, name);
-        this.rate = rate.trim().replace(" ", "");
+        this.rate = CalculationUtils.requireNonNegative(rate);
     }
 
     @Override
@@ -35,6 +35,6 @@ public class PercentageDeduction extends AbstractCalculationComponent implements
 
     @Override
     public String report() {
-        return "- " + getCategory() +  " (" + rate + "%)";
+        return "- " + getCategory() + " (" + rate + "%)";
     }
 }

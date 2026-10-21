@@ -1,17 +1,14 @@
 package payroll.service;
 
 import payroll.domain.Employee;
+import payroll.domain.PayslipDiffReport;
 import payroll.domain.PayslipVersion;
 import payroll.rule.CalculationComponent;
 import payroll.rule.OverdeductionException;
 
-import java.time.Month;
 import java.time.YearMonth;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import payroll.domain.PayslipDiffReport;
-import payroll.domain.PayslipLine;
 
 /**
  * Main API for the Payroll System.

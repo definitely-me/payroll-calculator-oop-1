@@ -22,7 +22,7 @@ public class PercentageAccrual extends AbstractCalculationComponent implements A
      */
     public PercentageAccrual(DateInterval dateInterval, String rate, String name) {
         super(dateInterval, name);
-        this.rate = rate.trim().replace(" ", "");
+        this.rate = CalculationUtils.requireNonNegative(rate);
     }
 
     @Override

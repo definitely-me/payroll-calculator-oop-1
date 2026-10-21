@@ -11,7 +11,7 @@ import java.time.YearMonth;
  */
 public class ProportionalAccrual extends AbstractCalculationComponent implements Accrual {
     private final long amount;
-    
+
     /**
      * Creates a proportional accrual.
      *
@@ -21,7 +21,7 @@ public class ProportionalAccrual extends AbstractCalculationComponent implements
      */
     public ProportionalAccrual(DateInterval dateInterval, long amount, String name) {
         super(dateInterval, name);
-        this.amount = amount;
+        this.amount = CalculationUtils.requireNonNegative(amount);
     }
 
     @Override

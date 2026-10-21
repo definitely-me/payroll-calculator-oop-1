@@ -19,5 +19,6 @@ public sealed interface CalculationComponent extends Reportable permits Accrual,
     long calculate(long base, YearMonth interval);
 
     UUID getId();
+
     String getCategory();
 }

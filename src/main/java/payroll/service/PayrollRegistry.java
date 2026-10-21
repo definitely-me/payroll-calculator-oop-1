@@ -8,7 +8,8 @@ import java.util.*;
 class PayrollRegistry {
     private final Map<Employee, List<CalculationComponent>> registry = new HashMap<>();
 
-    PayrollRegistry() {}
+    PayrollRegistry() {
+    }
 
     void replaceComponent(Employee employee, CalculationComponent old, CalculationComponent updated) {
         List<CalculationComponent> components = getPrivateComponentsFor(employee);

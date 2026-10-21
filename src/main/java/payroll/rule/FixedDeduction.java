@@ -1,6 +1,7 @@
 package payroll.rule;
 
 import payroll.domain.DateInterval;
+import payroll.util.CalculationUtils;
 import payroll.util.DateUtils;
 
 import java.time.YearMonth;
@@ -21,7 +22,7 @@ public class FixedDeduction extends AbstractCalculationComponent implements Dedu
      */
     public FixedDeduction(DateInterval dateInterval, long amount, String name) {
         super(dateInterval, name);
-        this.amount = amount;
+        this.amount = CalculationUtils.requireNonNegative(amount);
     }
 
     @Override
